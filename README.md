@@ -11,7 +11,7 @@ The plugin currently supports only one the default connection to `localhost:8383
 The following actions are currently available:
 
 | Action | Description |
-|--------|----------------|-------------|
+|--------|-------------|
 | Do Action | trigger one of the actions described in https://github.com/ftl/hellocontest/wiki/Configuration#keybindings |
 | Send | send a morse code template as described in https://github.com/ftl/hellocontest/wiki/Configuration#keyer-presets |
 | Search & Pounce | navigate through the spots and trigger the start of a QSO |

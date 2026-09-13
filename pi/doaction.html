@@ -16,9 +16,16 @@
                 const actionIdEl = document.getElementById("actionId");
                 actionIdEl.value = settings.actionId ?? "";
 
+                const paramsEl = document.getElementById("params");
+                paramsEl.value = settings.params ?? "";
+
                 const longPressActionIdEl =
                     document.getElementById("longPressActionId");
                 longPressActionIdEl.value = settings.longPressActionId ?? "";
+
+                const longPressParamsEl =
+                    document.getElementById("longPressParams");
+                longPressParamsEl.value = settings.longPressParams ?? "";
 
                 websocket.onopen = () => {
                     websocket.send(
@@ -33,8 +40,11 @@
                     const data = JSON.parse(event.data);
                     if (data.event === "didReceiveSettings") {
                         actionIdEl.value = data.payload?.settings?.actionId ?? "";
+                        paramsEl.value = data.payload?.settings?.params ?? "";
                         longPressActionIdEl.value =
                             data.payload?.settings?.longPressActionId ?? "";
+                        longPressParamsEl.value =
+                            data.payload?.settings?.longPressParams ?? "";
                     }
                 };
 
@@ -45,14 +55,18 @@
                             context: inActionInfo.context,
                             payload: {
                                 actionId: actionIdEl.value,
+                                params: paramsEl.value,
                                 longPressActionId: longPressActionIdEl.value,
+                                longPressParams: longPressParamsEl.value,
                             },
                         }),
                     );
                 };
 
                 actionIdEl.addEventListener("input", sendSettings);
+                paramsEl.addEventListener("input", sendSettings);
                 longPressActionIdEl.addEventListener("input", sendSettings);
+                longPressParamsEl.addEventListener("input", sendSettings);
             }
 
             const connectElgatoStreamDeckSocket = connectOpenActionSocket;
@@ -88,11 +102,23 @@
             <input type="text" id="actionId" placeholder="e.g. entry.next_esm_step" />
         </div>
         <div>
+            <label for="params">Parameters</label>
+            <input type="text" id="params" placeholder="e.g. number=5" />
+        </div>
+        <div>
             <label for="longPressActionId">Long Press Action ID</label>
             <input
                 type="text"
                 id="longPressActionId"
                 placeholder="empty: same as Action ID"
+            />
+        </div>
+        <div>
+            <label for="longPressParams">Long Press Parameters</label>
+            <input
+                type="text"
+                id="longPressParams"
+                placeholder="e.g. number=5"
             />
         </div>
     </body>

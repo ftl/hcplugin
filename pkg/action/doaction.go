@@ -23,15 +23,17 @@ func NewDoAction(context string, client ClientAccessor, deck Deck, status Status
 	return &DoAction{context: context, client: client, deck: deck, status: status}
 }
 
-func (a *DoAction) parseSettings(settings map[string]any, longPress bool) string {
+func (a *DoAction) parseSettings(settings map[string]any, longPress bool) (string, string) {
 	if longPress {
 		// a long press without its own action ID does the same as a short press
-		if s, _ := settings["longPressActionId"].(string); s != "" {
-			return s
+		if actionID, _ := settings["longPressActionId"].(string); actionID != "" {
+			params, _ := settings["longPressParams"].(string)
+			return actionID, params
 		}
 	}
-	s, _ := settings["actionId"].(string)
-	return s
+	actionID, _ := settings["actionId"].(string)
+	params, _ := settings["params"].(string)
+	return actionID, params
 }
 
 // the key up decides about the length of the press, therefore the action runs on the key up
@@ -47,11 +49,16 @@ func (a *DoAction) KeyUp(p *sdk.ReceivedEventPayload) error {
 func (a *DoAction) DialDown(p *sdk.ReceivedEventPayload) error { return a.fire(p, false) }
 
 func (a *DoAction) fire(p *sdk.ReceivedEventPayload, longPress bool) error {
-	actionID := a.parseSettings(p.Settings, longPress)
+	actionID, rawParams := a.parseSettings(p.Settings, longPress)
 	if actionID == "" {
 		a.status.Record(a.deck, a.context, fmt.Errorf("actionId not configured"))
 		return nil
 	}
-	a.status.Record(a.deck, a.context, a.client().Do(actionID))
+	params, err := parseParams(rawParams)
+	if err != nil {
+		a.status.Record(a.deck, a.context, err)
+		return nil
+	}
+	a.status.Record(a.deck, a.context, a.client().Do(actionID, params))
 	return nil
 }

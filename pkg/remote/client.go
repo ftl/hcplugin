@@ -20,13 +20,17 @@ func New(port int) *Client {
 	}
 }
 
-func (c *Client) Do(actionID string) error {
+func (c *Client) Do(actionID string, params map[string]string) error {
 	u := url.URL{
 		Scheme: "http",
 		Host:   fmt.Sprintf("127.0.0.1:%d", c.port),
 		Path:   "/do",
 	}
 	q := u.Query()
+	for name, value := range params {
+		q.Set(name, value)
+	}
+	// the action always wins over a parameter with the same name
 	q.Set("action", actionID)
 	u.RawQuery = q.Encode()
 	return c.post(u.String())

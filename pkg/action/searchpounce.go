@@ -20,7 +20,7 @@ func NewSearchPounce(context string, client ClientAccessor, deck Deck, status St
 }
 
 func (a *SearchPounce) DialDown(_ *sdk.ReceivedEventPayload) error {
-	a.status.Record(a.deck, a.context, a.client().Do("entry.next_esm_step"))
+	a.status.Record(a.deck, a.context, a.client().Do("entry.next_esm_step", nil))
 	return nil
 }
 
@@ -36,7 +36,7 @@ func (a *SearchPounce) DialRotate(p *sdk.ReceivedEventPayload) error {
 		n = -n
 	}
 	var lastErr error
-	if err := a.client().Do(actionID); err != nil {
+	if err := a.client().Do(actionID, nil); err != nil {
 		lastErr = err
 	}
 	a.status.Record(a.deck, a.context, lastErr)

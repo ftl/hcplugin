@@ -34,7 +34,7 @@ func TestDo(t *testing.T) {
 	defer srv.Close()
 
 	c := New(serverPort(t, srv.URL))
-	err := c.Do("entry.next_esm_step")
+	err := c.Do("entry.next_esm_step", nil)
 	require.NoError(t, err)
 	assert.Equal(t, "/do", capturedPath)
 	assert.Equal(t, "action=entry.next_esm_step", capturedQuery)
@@ -49,8 +49,23 @@ func TestDoURLEncoding(t *testing.T) {
 	defer srv.Close()
 
 	c := New(serverPort(t, srv.URL))
-	require.NoError(t, c.Do("hello world"))
+	require.NoError(t, c.Do("hello world", nil))
 	assert.Equal(t, "hello world", capturedAction)
+}
+
+func TestDoWithParams(t *testing.T) {
+	var capturedQuery url.Values
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		capturedQuery = r.URL.Query()
+		w.WriteHeader(http.StatusOK)
+	}))
+	defer srv.Close()
+
+	c := New(serverPort(t, srv.URL))
+	err := c.Do("bandmap.mark_with_number", map[string]string{"number": "5", "action": "ignored"})
+	require.NoError(t, err)
+	assert.Equal(t, "bandmap.mark_with_number", capturedQuery.Get("action"))
+	assert.Equal(t, "5", capturedQuery.Get("number"))
 }
 
 func TestSend(t *testing.T) {
@@ -76,7 +91,7 @@ func TestDoServerError(t *testing.T) {
 	defer srv.Close()
 
 	c := New(serverPort(t, srv.URL))
-	err := c.Do("some.action")
+	err := c.Do("some.action", nil)
 	assert.Error(t, err)
 }
 
@@ -88,6 +103,6 @@ func TestDoTimeout(t *testing.T) {
 	defer srv.Close()
 
 	c := New(serverPort(t, srv.URL))
-	err := c.Do("some.action")
+	err := c.Do("some.action", nil)
 	assert.Error(t, err)
 }

@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-const LongPressThreshold = 500 * time.Millisecond
+const LongPressThreshold = 800 * time.Millisecond
 
 // keyPress tells a long press from a short one by the time between key down and
 // key up. The SDK dispatches every event in its own goroutine, therefore the

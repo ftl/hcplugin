@@ -29,7 +29,7 @@ number=5
 ### Long Press
 
 The key actions *Do Action* and *Send* also have long press settings. A press of
-500 ms or more uses those settings, a shorter press uses the normal settings. If
+800 ms or more uses those settings, a shorter press uses the normal settings. If
 the long press action ID (or the long press text) is empty, a long press does the
 same as a short press. Both actions run when you release the key. The dial press
 of an encoder always runs the normal setting immediately.

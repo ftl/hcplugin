@@ -27,6 +27,10 @@ type KeyDownHandler interface {
 	KeyDown(*sdk.ReceivedEventPayload) error
 }
 
+type KeyUpHandler interface {
+	KeyUp(*sdk.ReceivedEventPayload) error
+}
+
 type DialDownHandler interface {
 	DialDown(*sdk.ReceivedEventPayload) error
 }

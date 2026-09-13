@@ -16,6 +16,10 @@
                 const actionIdEl = document.getElementById("actionId");
                 actionIdEl.value = settings.actionId ?? "";
 
+                const longPressActionIdEl =
+                    document.getElementById("longPressActionId");
+                longPressActionIdEl.value = settings.longPressActionId ?? "";
+
                 websocket.onopen = () => {
                     websocket.send(
                         JSON.stringify({
@@ -29,18 +33,26 @@
                     const data = JSON.parse(event.data);
                     if (data.event === "didReceiveSettings") {
                         actionIdEl.value = data.payload?.settings?.actionId ?? "";
+                        longPressActionIdEl.value =
+                            data.payload?.settings?.longPressActionId ?? "";
                     }
                 };
 
-                actionIdEl.addEventListener("input", () => {
+                const sendSettings = () => {
                     websocket.send(
                         JSON.stringify({
                             event: "setSettings",
                             context: inActionInfo.context,
-                            payload: { actionId: actionIdEl.value },
+                            payload: {
+                                actionId: actionIdEl.value,
+                                longPressActionId: longPressActionIdEl.value,
+                            },
                         }),
                     );
-                });
+                };
+
+                actionIdEl.addEventListener("input", sendSettings);
+                longPressActionIdEl.addEventListener("input", sendSettings);
             }
 
             const connectElgatoStreamDeckSocket = connectOpenActionSocket;
@@ -74,6 +86,14 @@
         <div>
             <label for="actionId">Action ID</label>
             <input type="text" id="actionId" placeholder="e.g. entry.next_esm_step" />
+        </div>
+        <div>
+            <label for="longPressActionId">Long Press Action ID</label>
+            <input
+                type="text"
+                id="longPressActionId"
+                placeholder="empty: same as Action ID"
+            />
         </div>
     </body>
 </html>

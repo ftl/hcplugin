@@ -92,6 +92,10 @@ func (p *Plugin) Handle(event *sdk.ReceivedEvent) error {
 		return handle(inst, func(handler action.KeyDownHandler) error {
 			return handler.KeyDown(event.Payload)
 		})
+	case sdk.KeyUp:
+		return handle(inst, func(handler action.KeyUpHandler) error {
+			return handler.KeyUp(event.Payload)
+		})
 	case sdk.DialRotate:
 		return handle(inst, func(handler action.DialRotateHandler) error {
 			return handler.DialRotate(event.Payload)

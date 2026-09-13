@@ -16,6 +16,9 @@
                 const textEl = document.getElementById("text");
                 textEl.value = settings.text ?? "";
 
+                const longPressTextEl = document.getElementById("longPressText");
+                longPressTextEl.value = settings.longPressText ?? "";
+
                 websocket.onopen = () => {
                     websocket.send(
                         JSON.stringify({
@@ -29,18 +32,26 @@
                     const data = JSON.parse(event.data);
                     if (data.event === "didReceiveSettings") {
                         textEl.value = data.payload?.settings?.text ?? "";
+                        longPressTextEl.value =
+                            data.payload?.settings?.longPressText ?? "";
                     }
                 };
 
-                textEl.addEventListener("input", () => {
+                const sendSettings = () => {
                     websocket.send(
                         JSON.stringify({
                             event: "setSettings",
                             context: inActionInfo.context,
-                            payload: { text: textEl.value },
+                            payload: {
+                                text: textEl.value,
+                                longPressText: longPressTextEl.value,
+                            },
                         }),
                     );
-                });
+                };
+
+                textEl.addEventListener("input", sendSettings);
+                longPressTextEl.addEventListener("input", sendSettings);
             }
 
             const connectElgatoStreamDeckSocket = connectOpenActionSocket;
@@ -74,6 +85,14 @@
         <div>
             <label for="text">Text</label>
             <input type="text" id="text" placeholder="e.g. CQ DX" />
+        </div>
+        <div>
+            <label for="longPressText">Long Press Text</label>
+            <input
+                type="text"
+                id="longPressText"
+                placeholder="empty: same as Text"
+            />
         </div>
     </body>
 </html>
